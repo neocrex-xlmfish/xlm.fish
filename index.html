@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XLMFISH Litepaper</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#05668D',
+            secondary: '#427AA1',
+            lightbg: '#EBF2FA',
+            green1: '#679436',
+            green2: '#A5BE00',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-lightbg text-gray-900 font-sans">
+
+  <!-- Top Logo Section -->
+  <section class="bg-primary text-white py-24 text-center px-6">
+    <img src="https://cdn.lu.meme/prod/meme/meme-G8uRAcXoQpZ11ynZsLN3scrjp6Bywpc5.png" alt="XLMFISH Logo" class="w-32 h-32 mx-auto mb-4">
+    <h1 class="text-4xl font-bold mb-2">XLMFISH</h1>
+    <p class="text-lg relative inline-block">
+      Asset: XLMFISH | Issuer: 
+      <span id="issuer" class="cursor-pointer underline" onclick="copyIssuer()" title="Click to copy full issuer">
+        GAX3Y..ABTEMT
+      </span>
+      <span id="copy-tooltip" class="absolute left-0 -top-6 bg-black text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity duration-300">
+        Copied!
+      </span>
+    </p>
+  </section>
+
+  <!-- Introduction -->
+  <section id="introduction" class="max-w-4xl mx-auto py-12 px-6 text-center">
+    <h2 class="text-3xl font-semibold mb-4 text-secondary">Introduction</h2>
+    <p class="text-lg">XLMFISH is a community-driven token that shows even memes can have real utility on Stellar. 
+    It powers liquidity, supports asset trading, and provides a framework for sustainable community growth.</p>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="bg-white py-12 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 text-center">
+      
+      <!-- Liquidity -->
+      <div class="flex flex-col items-center">
+        <i data-feather="bar-chart-2" class="w-16 h-16 mb-4 text-secondary"></i>
+        <h3 class="text-xl font-semibold mb-2 text-primary">Liquidity Support</h3>
+        <p>Enhances tradability for Stellar assets, reducing slippage and friction in markets.</p>
+      </div>
+      
+      <!-- Treasury -->
+      <div class="flex flex-col items-center">
+        <i data-feather="trello" class="w-16 h-16 mb-4 text-green1"></i>
+        <h3 class="text-xl font-semibold mb-2 text-green1">Community Treasury</h3>
+        <p>Funds can be deployed into yield-bearing strategies to generate returns for liquidity and incentives.</p>
+      </div>
+      
+      <!-- Community -->
+      <div class="flex flex-col items-center">
+        <i data-feather="users" class="w-16 h-16 mb-4 text-green2"></i>
+        <h3 class="text-xl font-semibold mb-2 text-green2">Community-Driven</h3>
+        <p>Participation strengthens the ecosystem and ensures decisions benefit holders collectively.</p>
+      </div>
+      
+      <!-- Sustainability -->
+      <div class="flex flex-col items-center">
+        <i data-feather="repeat" class="w-16 h-16 mb-4 text-primary"></i>
+        <h3 class="text-xl font-semibold mb-2 text-primary">Sustainability</h3>
+        <p>Reinvestment and liquidity support create long-term growth and stability for XLMFISH.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="max-w-4xl mx-auto py-12 px-6 text-center">
+    <h2 class="text-3xl font-semibold mb-4 text-secondary">How It Works</h2>
+    <p class="text-lg mb-6">XLMFISH functions as a community-backed liquidity asset. Treasury funds support liquidity, generate returns, and reinvest into incentives, creating a cycle of sustainable growth and utility.</p>
+    <i data-feather="refresh-cw" class="w-16 h-16 mx-auto text-secondary"></i>
+  </section>
+
+  <!-- Why It Has Value -->
+  <section id="value" class="bg-white py-12 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-semibold mb-4 text-secondary">Why It Has Value</h2>
+      <p class="text-lg mb-6">XLMFISH derives value from <strong>utility, liquidity, and community trust</strong>. It smooths trading, rewards participation, and maintains long-term growth through reinvestment.</p>
+      <i data-feather="star" class="w-16 h-16 mx-auto text-green2"></i>
+    </div>
+  </section>
+
+  <!-- Conclusion -->
+  <section id="conclusion" class="bg-secondary text-white py-12 px-6 text-center">
+    <h2 class="text-3xl font-semibold mb-4">Conclusion</h2>
+    <p class="text-lg">XLMFISH is a meme with purpose — a community-driven token that delivers liquidity, utility, and sustainable growth on Stellar.</p>
+  </section>
+
+  <!-- Disclaimer Section -->
+  <section class="bg-lightbg text-gray-700 py-6 px-6 text-center text-sm">
+    <p>
+      XLMFISH is a digital asset issued on the Stellar blockchain. Holding or trading this asset 
+      involves risk, and past performance does not guarantee future results. 
+      Nothing on this site constitutes financial, investment, or legal advice. 
+      Always conduct your own research and consult with a qualified professional before making financial decisions.
+    </p>
+  </section>
+
+  <!-- Available Section (moved to bottom above footer, updated to buttons) -->
+  <section id="get-xlmfish" class="bg-green1 text-white py-8 text-center px-6">
+    <h2 class="text-2xl font-semibold mb-6">Get XLMFISH Now</h2>
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+      <!-- lu.meme button -->
+      <a href="https://lu.meme/explore/memes/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
+         target="_blank"
+         class="px-6 py-3 rounded-lg font-medium text-white bg-green2 hover:bg-green1 transition w-48 text-center">
+        lu.meme
+      </a>
+      <!-- lumos launchpad button -->
+      <a href="https://lumoscore.com/launchpad/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
+         target="_blank"
+         class="px-6 py-3 rounded-lg font-medium text-white bg-[#FF7B1B] hover:opacity-90 transition w-48 text-center">
+        Lumos Launchpad
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white py-4 text-center px-6 text-sm">
+    &copy; 2025 XLMFISH. All rights reserved. | Available at 
+    <a href="https://lu.meme/explore/memes/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT" 
+       target="_blank" class="underline text-green2 hover:text-green1">lu.meme</a>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    feather.replace()
+
+    function copyIssuer() {
+      const issuer = "GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT";
+      navigator.clipboard.writeText(issuer).then(() => {
+        const tooltip = document.getElementById('copy-tooltip');
+        tooltip.classList.add('opacity-100');
+        setTimeout(() => tooltip.classList.remove('opacity-100'), 1500);
+      });
+    }
+  </script>
+
+</body>
+</html>
+
