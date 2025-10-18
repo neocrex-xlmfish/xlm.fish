@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XLMFISH Liquidity Pools on Stellar – Live Pool Metrics & Rankings</title>
+
+  <meta name="description" content="Explore XLMFISH liquidity pools on Stellar. View top pools, total XLMFISH liquidity, USD estimates, and live rankings. Prototype content; subject to change." />
+  <meta property="og:title" content="XLMFISH Liquidity Pools on Stellar – Live Pool Metrics & Rankings" />
+  <meta property="og:description" content="Top XLMFISH pools, total liquidity in XLMFISH, USD estimates, and live rankings." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="xlmfish_sm.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="XLMFISH Liquidity Pools on Stellar – Live Pool Metrics & Rankings" />
+  <meta name="twitter:description" content="Top XLMFISH pools, total liquidity in XLMFISH, USD estimates, and live rankings." />
+  <meta name="twitter:image" content="xlmfish_sm.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { primary:'#05668D', secondary:'#427AA1', lightbg:'#EBF2FA', green1:'#679436', green2:'#A5BE00' }}}}
+  </script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>html { scroll-behavior: smooth; }</style>
+</head>
+<body class="bg-lightbg text-gray-900 font-sans">
+
+  <!-- Header: desktop text nav, mobile icon nav (pool shows: index + litepaper) -->
+  <header class="bg-white/90 backdrop-blur sticky top-0 z-50 border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center justify-between h-14">
+        <a href="index.html" class="flex items-center gap-2">
+          <img src="xlmfish_sm.png" alt="XLMFISH" class="w-6 h-6">
+          <span class="font-semibold text-gray-900">XLMFISH</span>
+        </a>
+        <!-- Desktop nav -->
+        <nav class="hidden md:flex items-center gap-6">
+          <a data-nav href="index.html" class="text-gray-700 hover:text-primary transition">Home</a>
+          <a data-nav href="lp-viewer.html" class="text-primary md:border-b-2 md:border-primary transition">Liquidity</a>
+          <a data-nav href="litepaper.html" class="text-gray-700 hover:text-primary transition">Litepaper</a>
+        </nav>
+        <!-- Mobile icon nav: pool -> index + litepaper -->
+        <nav class="flex md:hidden items-center gap-2">
+          <a href="index.html" aria-label="Home" class="p-2 rounded hover:bg-gray-100 text-gray-700 hover:text-primary">
+            <i data-feather="home" class="w-5 h-5"></i>
+          </a>
+          <a href="litepaper.html" aria-label="Litepaper" class="p-2 rounded hover:bg-gray-100 text-gray-700 hover:text-primary">
+            <i data-feather="file-text" class="w-5 h-5"></i>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-primary text-white py-20 text-center px-6">
+    <img src="xlmfish_sm.png" alt="XLMFISH Logo" class="w-28 h-28 mx-auto mb-4">
+    <h1 class="text-4xl font-bold mb-2">Liquidity Pools</h1>
+    <p class="text-lg">Live XLMFISH pool metrics and rankings on Stellar mainnet</p>
+  </section>
+
+  <!-- Introduction -->
+  <section id="introduction" class="max-w-4xl mx-auto py-12 px-6 text-center">
+    <h2 class="text-3xl font-semibold mb-4 text-secondary">About Liquidity Pools</h2>
+    <p class="text-lg">
+      This page lists current liquidity pools that contain XLMFISH (no change to which pools are included).
+      Liquidity is reported in total XLMFISH units for consistency, with approximate USD values when available.
+    </p>
+    <p class="text-sm text-gray-500 mt-3">
+      Data sources: Stellar Horizon (mainnet) and CoinGecko (XLM/USD). Values are approximate and for informational purposes only.
+    </p>
+  </section>
+
+  <!-- Key Metrics -->
+  <section class="bg-white py-12 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow">
+        <i data-feather="trending-up" class="w-12 h-12 mb-4 text-primary"></i>
+        <h3 class="text-xl font-semibold mb-2 text-primary">Total Liquidity (XLMFISH)</h3>
+        <p class="text-3xl font-bold text-gray-900" id="total-liquidity">—</p>
+        <p class="text-xs text-gray-500 mt-2" id="total-liquidity-usd">≈ —</p>
+      </div>
+      <div class="flex flex-col items-center p-8 border-l-4 border-green1 rounded-lg shadow">
+        <i data-feather="list" class="w-12 h-12 mb-4 text-green1"></i>
+        <h3 class="text-xl font-semibold mb-2 text-green1">Top 10 Pools</h3>
+        <ul class="text-sm text-gray-700 space-y-2 w-full text-left" id="top-10-pools"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Distribution Pie Chart -->
+  <section class="max-w-4xl mx-auto py-12 px-6">
+    <h2 class="text-2xl font-semibold mb-8 text-center text-secondary">Top Pools by Size</h2>
+    <div class="flex justify-center">
+      <canvas id="distributionChart" class="max-w-lg"></canvas>
+    </div>
+    <p class="text-center text-xs text-gray-500 mt-3">
+      Top liquidity pools by size; remaining liquidity is grouped as Other.
+    </p>
+  </section>
+
+  <!-- Data Table -->
+  <section class="bg-white py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-6 text-secondary">All Pools</h2>
+      <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <input type="text" id="search-input" placeholder="Search pools..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+        <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+          <option value="usd-desc" selected>Highest USD</option>
+          <option value="usd-asc">Lowest USD</option>
+          <option value="liquidity-desc">Highest XLMFISH</option>
+          <option value="liquidity-asc">Lowest XLMFISH</option>
+          <option value="name-asc">Name A→Z</option>
+          <option value="name-desc">Name Z→A</option>
+        </select>
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">#</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Pool</th>
+              <th class="px-4 py-3 text-right font-semibold text-gray-700">Liquidity (XLMFISH)</th>
+              <th class="px-4 py-3 text-right font-semibold text-gray-700">≈ USD</th>
+              <th class="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
+            </tr>
+          </thead>
+          <tbody id="pools-table-body"></tbody>
+        </table>
+      </div>
+      <div class="mt-4 text-center text-gray-600" id="loading-message">Loading pools from Horizon (mainnet)...</div>
+      <p class="text-center text-xs text-gray-500 mt-2" id="pools-updated">—</p>
+    </div>
+  </section>
+
+  <!-- Small CTA + Disclaimer -->
+  <section class="py-12 px-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow border border-gray-100 p-6 text-center">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-1">Get XLMFISH</h2>
+      <p class="text-gray-600 mb-6">Trade and explore on supported platforms</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="https://lu.meme/explore/memes/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 rounded-full px-6 py-3 text-white bg-secondary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary/30 transition">
+          <i data-feather="external-link" class="w-4 h-4"></i>
+          <span>lu.meme</span>
+        </a>
+        <a href="https://lumoscore.com/launchpad/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 rounded-full px-6 py-3 text-white bg-[#FF7B1B] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#FF7B1B]/30 transition">
+          <i data-feather="external-link" class="w-4 h-4"></i>
+          <span>Lumos Launchpad</span>
+        </a>
+      </div>
+      <p class="text-xs text-gray-500 mt-6">
+        XLMFISH is a digital asset issued on the Stellar blockchain. Holding or trading this asset involves risk, and past performance does not guarantee future results.
+        Nothing on this site constitutes financial, investment, or legal advice. Always conduct your own research and consult with a qualified professional before making financial decisions.
+      </p>
+    </div>
+  </section>
+
+  <!-- Minimal Footer (icons + links) -->
+  <footer class="bg-white text-gray-500 border-t border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-xs">
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="index.html" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="home" class="w-3 h-3"></i><span>Home</span></a>
+        <a href="lp-viewer.html" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="bar-chart-2" class="w-3 h-3"></i><span>Liquidity</span></a>
+        <a href="litepaper.html" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="file-text" class="w-3 h-3"></i><span>Litepaper</span></a>
+        <a href="https://lu.meme/explore/memes/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT" target="_blank" rel="noopener" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="external-link" class="w-3 h-3"></i><span>lu.meme</span></a>
+        <a href="https://lumoscore.com/launchpad/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT" target="_blank" rel="noopener" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="external-link" class="w-3 h-3"></i><span>Lumos</span></a>
+        <a href="https://x.com/xlmfish" target="_blank" rel="noopener" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="twitter" class="w-3 h-3"></i><span>X</span></a>
+      </div>
+      <div class="mt-2">&copy; 2025 XLMFISH</div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>feather.replace();</script>
+  <script src="js/cache.js"></script>
+  <script src="js/lp-topn-chart.js"></script>
+  <script>
+    const HORIZON = 'https://horizon.stellar.org';
+    const ASSET_CODE = 'XLMFISH';
+    const ASSET_ISSUER = 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT';
+    const FISH_ASSET = `${ASSET_CODE}:${ASSET_ISSUER}`;
+
+    let allPools = [];
+    let filteredPools = [];
+    let priceUsd = null;
+
+    const num = (v) => typeof v === 'number' ? v : Number(String(v ?? '').replace(/[^0-9.-]/g, '')) || 0;
+    const fmtUsd2 = (n) => (n == null || !isFinite(n)) ? '—' : '$' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function assetShort(asset) { if (asset === 'native') return 'XLM'; const [code] = String(asset).split(':'); return code || asset; }
+    function poolNameFromReserves(reserves) { if (!Array.isArray(reserves) || reserves.length < 2) return '—'; const a = assetShort(reserves[0].asset); const b = assetShort(reserves[1].asset); return `${a}/${b}`; }
+    function fishReserveFromReserves(reserves) { const fish = (reserves || []).find(r => r.asset === FISH_ASSET); return fish ? num(fish.amount) : 0; }
+
+    async function getJSON(url, opts) { if (typeof window.cachedJSON === 'function') return window.cachedJSON(url, opts || {}); const res = await fetch(url); if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${url}`); return res.json(); }
+
+    async function fetchFishUsdPrice() {
+      const params = new URLSearchParams({ base_asset_type:'credit_alphanum12', base_asset_code:ASSET_CODE, base_asset_issuer:ASSET_ISSUER, counter_asset_type:'native', resolution:String(24*60*60*1000), limit:'1', order:'desc' });
+      const aggUrl = `${HORIZON}/trade_aggregations?${params.toString()}`;
+      const aggData = await getJSON(aggUrl, { ttlMs: 60 * 1000 });
+      const bucket = aggData?._embedded?.records?.[0];
+      const priceInXLM = bucket ? (num(bucket.close) || num(bucket.avg) || null) : null;
+      const cgUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd';
+      const cgData = await getJSON(cgUrl, { ttlMs: 60 * 1000 });
+      const xlmUsd = cgData?.stellar?.usd ?? null;
+      return (priceInXLM != null && xlmUsd != null) ? priceInXLM * xlmUsd : null;
+    }
+
+    async function loadPoolsFromHorizon() {
+      const reservesParam = encodeURIComponent(FISH_ASSET);
+      const url = `${HORIZON}/liquidity_pools?reserves=${reservesParam}&limit=200&order=asc`;
+      const data = await getJSON(url, { ttlMs: 2 * 60 * 1000 });
+      const records = data?._embedded?.records ?? [];
+      return records.map(rec => {
+        const name = poolNameFromReserves(rec.reserves || []);
+        const fishAmt = fishReserveFromReserves(rec.reserves || []);
+        const status = num(rec.total_shares) > 0 ? 'active' : 'inactive';
+        return { id: rec.id, name, liquidityFish: fishAmt, usdValue: null, status, reserves: rec.reserves || [] };
+      });
+    }
+
+    function updateMetrics() {
+      const totalFish = allPools.reduce((s, p) => s + num(p.liquidityFish), 0);
+      document.getElementById('total-liquidity').textContent = `${totalFish.toLocaleString()} XLMFISH`;
+      const totalUsdEl = document.getElementById('total-liquidity-usd');
+      totalUsdEl.textContent = (priceUsd != null) ? `≈ ${fmtUsd2(totalFish * priceUsd)}` : '≈ —';
+
+      const top10 = allPools.slice().sort((a, b) => num(b.liquidityFish) - num(a.liquidityFish)).slice(0, 10);
+      document.getElementById('top-10-pools').innerHTML = top10.map((p, i) => {
+        const fishText = p.liquidityFish ? `${p.liquidityFish.toLocaleString()} XLMFISH` : '—';
+        const usdText = (priceUsd != null && p.liquidityFish) ? ` (≈ ${fmtUsd2(p.liquidityFish * priceUsd)})` : '';
+        return `<li>${i + 1}. ${p.name} — ${fishText}${usdText}</li>`;
+      }).join('');
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('pools-table-body');
+      tbody.innerHTML = '';
+      filteredPools.forEach((p, index) => {
+        const statusBadge = p.status === 'active' ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>' : '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Inactive</span>';
+        const fish = p.liquidityFish ? `${p.liquidityFish.toLocaleString()} XLMFISH` : '—';
+        const usd = (priceUsd != null && p.liquidityFish) ? fmtUsd2(p.liquidityFish * priceUsd) : '—';
+        const row = document.createElement('tr');
+        row.className = 'border-b border-gray-200 hover:bg-gray-50 transition-colors';
+        row.innerHTML = `
+          <td class="px-4 py-3 text-gray-600">${index + 1}</td>
+          <td class="px-4 py-3 font-medium text-gray-900">${p.name}</td>
+          <td class="px-4 py-3 text-right text-gray-900">${fish}</td>
+          <td class="px-4 py-3 text-right text-gray-900">${usd}</td>
+          <td class="px-4 py-3 text-center">${statusBadge}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function sortFilteredByCurrent() {
+      const select = document.getElementById('sort-select');
+      let sortType = select.value;
+      if ((sortType === 'usd-desc' || sortType === 'usd-asc') && priceUsd == null) sortType = 'liquidity-desc';
+      switch (sortType) {
+        case 'usd-desc': filteredPools.sort((a, b) => (num(b.liquidityFish) - num(a.liquidityFish)) * num(priceUsd || 0)); break;
+        case 'usd-asc':  filteredPools.sort((a, b) => (num(a.liquidityFish) - num(b.liquidityFish)) * num(priceUsd || 0)); break;
+        case 'liquidity-desc': filteredPools.sort((a, b) => num(b.liquidityFish) - num(a.liquidityFish)); break;
+        case 'liquidity-asc':  filteredPools.sort((a, b) => num(a.liquidityFish) - num(b.liquidityFish)); break;
+        case 'name-asc': filteredPools.sort((a, b) => a.name.localeCompare(b.name)); break;
+        case 'name-desc': filteredPools.sort((a, b) => b.name.localeCompare(a.name)); break;
+      }
+    }
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      filteredPools = allPools.filter(p => p.name.toLowerCase().includes(q));
+      sortFilteredByCurrent();
+      renderTable();
+    });
+
+    document.getElementById('sort-select').addEventListener('change', () => {
+      sortFilteredByCurrent();
+      renderTable();
+    });
+
+    async function init() {
+      try {
+        priceUsd = await fetchFishUsdPrice();
+        const pools = await loadPoolsFromHorizon();
+        pools.forEach(p => { p.usdValue = (priceUsd != null) ? num(p.liquidityFish) * priceUsd : null; });
+
+        allPools = pools;
+        filteredPools = pools.slice();
+
+        document.getElementById('sort-select').value = 'usd-desc';
+        sortFilteredByCurrent();
+
+        updateMetrics();
+        renderTable();
+
+        renderTopNPieChart('distributionChart', allPools, {
+          metric: (priceUsd != null) ? 'usd' : 'fish',
+          minOtherPct: 0.01
+        });
+
+        document.getElementById('loading-message').style.display = 'none';
+        document.getElementById('pools-updated').textContent = 'Updated ' + new Date().toLocaleString();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('loading-message').textContent = 'Error loading data from Horizon';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
