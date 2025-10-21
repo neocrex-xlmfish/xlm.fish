@@ -1,0 +1,26 @@
+# PHP / Composer
+/vendor/
+composer.lock
+
+# Symfony runtime & caches
+/var/
+/public/build/
+/public/bundles/
+
+# Local env / secrets
+.env.local
+.env.local.php
+
+# Node / editors / OS
+/node_modules/
+/.idea/
+/.vscode/
+/.DS_Store
+Thumbs.db
+
+# Logs and archives
+/logs/
+/*.log
+/*.zip
+/*.tar.gz
+
