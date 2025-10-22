@@ -1,26 +1,10 @@
-# PHP / Composer
-/vendor/
-composer.lock
 
-# Symfony runtime & caches
-/var/
-/public/build/
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-
-# Local env / secrets
-.env.local
-.env.local.php
-
-# Node / editors / OS
-/node_modules/
-/.idea/
-/.vscode/
-/.DS_Store
-Thumbs.db
-
-# Logs and archives
-/logs/
-/*.log
-/*.zip
-/*.tar.gz
-
+/var/
+/vendor/
+###< symfony/framework-bundle ###
