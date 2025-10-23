@@ -78,21 +78,4 @@
       <p class="text-center text-xs text-gray-500 mt-2" id="pools-updated">—</p>
     </div>
   </section>
-
-  <footer class="bg-white text-gray-500 border-t border-gray-200">
-    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-xs">
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="{{ path('home') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="home" class="w-3 h-3"></i><span>Home</span></a>
-        <a href="{{ path('lp_index') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="bar-chart-2" class="w-3 h-3"></i><span>Liquidity</span></a>
-        <a href="{{ path('litepaper') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="file-text" class="w-3 h-3"></i><span>Litepaper</span></a>
-      </div>
-      <div class="mt-2">&copy; 2025 XLMFISH</div>
-    </div>
-  </footer>
-{% endblock %}
-
-{% block scripts %}
-  <script src="{{ asset('js/cache.js') }}"></script>
-  <script src="{{ asset('js/lp-topn-chart.js') }}"></script>
-  <script src="{{ asset('js/market-overview.js') }}"></script>
 {% endblock %}
