@@ -1,0 +1,27 @@
+<header class="bg-white/90 backdrop-blur sticky top-0 z-50 border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex items-center justify-between h-14">
+      <a href="{{ path('home') }}" class="flex items-center gap-2">
+        <img src="{{ asset('xlmfish_sm.png') }}" alt="XLMFISH" class="w-6 h-6">
+        <span class="font-semibold text-gray-900">XLMFISH</span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="{{ path('home') }}" class="text-primary md:border-b-2 md:border-primary transition">Home</a>
+        <a href="{{ path('lp_index') }}" class="text-gray-700 hover:text-primary transition">Liquidity</a>
+        <a href="{{ path('litepaper') }}" class="text-gray-700 hover:text-primary transition">Litepaper</a>
+      </nav>
+
+      <!-- Mobile icon nav -->
+      <nav class="flex md:hidden items-center gap-2">
+        <a href="{{ path('lp_index') }}" aria-label="Liquidity" class="p-2 rounded hover:bg-gray-100 text-gray-700 hover:text-primary">
+          <i data-feather="bar-chart-2" class="w-5 h-5"></i>
+        </a>
+        <a href="{{ path('litepaper') }}" aria-label="Litepaper" class="p-2 rounded hover:bg-gray-100 text-gray-700 hover:text-primary">
+          <i data-feather="file-text" class="w-5 h-5"></i>
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>

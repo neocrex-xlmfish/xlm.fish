@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}XLMFISH on Stellar – Overview & Live Metrics{% endblock %}
+
+{% block head_extra %}
+  <meta property="og:title" content="XLMFISH on Stellar – Overview & Live Metrics" />
+  <meta property="og:description" content="Live price, 24h volume, and market cap for XLMFISH on Stellar." />
+{% endblock %}
+
+{% block body %}
+  <!-- Hero -->
+  <section class="bg-primary text-white py-24 text-center px-6">
+    <img src="{{ asset('xlmfish_sm.png') }}" alt="XLMFISH Logo" class="w-32 h-32 mx-auto mb-4">
+    <h1 class="text-4xl font-bold mb-2">XLMFISH</h1>
+    <p class="text-lg">Overview and live metrics on the Stellar network</p>
+    <p class="text-sm opacity-90 mt-2">
+      Asset: XLMFISH | Issuer:
+      <span id="issuer" class="cursor-pointer underline" onclick="navigator.clipboard.writeText('GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT')">GAX3Y..ABTEMT</span>
+    </p>
+  </section>
+
+  <!-- Market Overview -->
+  <section id="market-overview" class="bg-white py-12 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-6 text-secondary text-center">Market Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow">
+          <i data-feather="dollar-sign" class="w-12 h-12 mb-4 text-primary"></i>
+          <h3 class="text-lg font-semibold mb-1 text-primary">Price (USD)</h3>
+          <p class="text-2xl font-bold" id="price-usd">—</p>
+          <p class="text-xs text-gray-500 mt-2">Stellar DEX + CoinGecko (XLM/USD)</p>
+        </div>
+        <div class="flex flex-col items-center p-8 border-l-4 border-green1 rounded-lg shadow">
+          <i data-feather="activity" class="w-12 h-12 mb-4 text-green1"></i>
+          <h3 class="text-lg font-semibold mb-1 text-green1">Volume (24h USD)</h3>
+          <p class="text-2xl font-bold" id="volume-24h-usd">—</p>
+          <p class="text-xs text-gray-500 mt-2">Sum across active XLMFISH pairs</p>
+        </div>
+        <div class="flex flex-col items-center p-8 border-l-4 border-green2 rounded-lg shadow">
+          <i data-feather="pie-chart" class="w-12 h-12 mb-4 text-green2"></i>
+          <h3 class="text-lg font-semibold mb-1 text-green2">Market Cap (USD)</h3>
+          <p class="text-2xl font-bold" id="market-cap-usd">—</p>
+          <p class="text-xs text-gray-500 mt-2">approximate (amount × price)</p>
+        </div>
+      </div>
+
+      <p class="text-center text-xs text-gray-500 mt-4" id="market-updated">Fetching live data...</p>
+
+      {# Short, user-facing disclaimer under market overview #}
+      <p class="text-center text-xs text-gray-500 mt-3">
+        XLMFISH is an experimental token and project on the Stellar blockchain. This site is provided for informational purposes only and does not constitute financial, investment, or legal advice.
+      </p>
+    </div>
+  </section>
+
+  {# Project status partial (non-technical, audience-friendly) #}
+  {% include 'home/_status.html.twig' %}
+
+  {# CTA partial (Get XLMFISH + disclaimer) #}
+  {% include 'home/_cta.html.twig' %}
+
+{% endblock %}
+
+{% block scripts %}
+  {# feather-icons replacement and site scripts; Chart.js is included in base if needed #}
+  <script>feather.replace();</script>
+
+{% endblock %}
