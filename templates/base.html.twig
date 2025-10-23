@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{% block title %}XLMFISH{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}XLMFISH – Stellar liquidity and analytics{% endblock %}" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#05668D',
+              secondary: '#427AA1',
+              lightbg: '#EBF2FA',
+              green1: '#679436',
+              green2: '#A5BE00'
+            }
+          }
+        }
+      };
+    </script>
+
+    {# favicons (replace files in public/ as needed) #}
+    <link rel="icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/apple-touch-icon.png') }}" />
+    <meta name="theme-color" content="#05668D" />
+
+    {% block head_extra %}{% endblock %}
+  </head>
+
+  <body class="bg-lightbg text-gray-900 font-sans">
+    {% include 'partials/_nav.html.twig' %}
+
+    <main id="main" class="min-h-screen">
+      {% block body %}{% endblock %}
+    </main>
+
+    {% include 'partials/_footer.html.twig' %}
+
+    {# third-party libs first (Chart.js for charts) #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    {# feather-icons + other libs #}
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    {# site JS (from public/js) — use asset() so Symfony knows the path #}
+    <script src="{{ asset('js/cache.js') }}"></script>
+    <script src="{{ asset('js/market-overview.js') }}"></script>
+    <script src="{{ asset('js/lp-topn-chart.js') }}"></script>
+    <script src="{{ asset('js/lp-viewer.js') }}"></script>
+
+    <script>feather.replace();</script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

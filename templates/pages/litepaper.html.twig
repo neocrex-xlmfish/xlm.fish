@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}XLMFISH Litepaper (Draft) – Scope, Design, and Assumptions{% endblock %}
+
+{% block head_extra %}
+  <meta name="robots" content="noindex" />
+  <meta property="og:title" content="XLMFISH Litepaper (Draft) – Scope, Design, and Assumptions" />
+  <meta property="og:description" content="Draft litepaper for XLMFISH on Stellar. Work in progress; subject to change." />
+{% endblock %}
+
+{% block body %}
+  <!-- Hero -->
+  <section class="bg-primary text-white py-20 text-center px-6">
+    <img src="{{ asset('xlmfish_sm.png') }}" alt="XLMFISH Logo" class="w-28 h-28 mx-auto mb-4">
+    <h1 class="text-4xl font-bold mb-2">XLMFISH Litepaper</h1>
+    <p class="text-lg">Draft – work in progress, subject to change</p>
+  </section>
+
+  <!-- Draft Notice -->
+  <section class="max-w-3xl mx-auto py-6 px-6">
+    <div class="bg-white border-l-4 border-amber-500 rounded-lg shadow p-5">
+      <h2 class="text-xl font-semibold text-amber-600 mb-2">Important</h2>
+      <p class="text-sm text-gray-700">
+        This page is a working draft intended for review and iteration. Content here may be incomplete and will evolve.
+        Do not rely on it for financial decisions. We will update this page as details are validated.
+      </p>
+      <p class="text-xs text-gray-500 mt-2" id="last-updated">Last updated: —</p>
+    </div>
+  </section>
+
+  <!-- Contents -->
+  <section class="max-w-3xl mx-auto py-6 px-6">
+    <h2 class="text-2xl font-semibold text-secondary mb-4">Contents</h2>
+    <ol class="list-decimal ml-6 space-y-2 text-gray-800">
+      <li><a href="#abstract" class="text-primary underline">Abstract</a></li>
+      <li><a href="#tokenomics" class="text-primary underline">Tokenomics & Distribution</a></li>
+      <li><a href="#liquidity-profile" class="text-primary underline">Liquidity Profile & Strategy</a></li>
+      <li><a href="#design" class="text-primary underline">Technical & Accessibility Standards</a></li>
+      <li><a href="#goals" class="text-primary underline">Goals and Scope</a></li>
+      <li><a href="#governance" class="text-primary underline">Governance (to be defined)</a></li>
+      <li><a href="#risks" class="text-primary underline">Risks and Disclosures</a></li>
+    </ol>
+  </section>
+
+  <!-- Abstract -->
+  <section id="abstract" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Abstract</h3>
+    <p class="text-gray-800">
+      XLMFISH is an experimental token focused on improving market liquidity on the Stellar network.
+      This litepaper summarizes intent, high-level design, and initial strategy. Details will be confirmed and expanded in future drafts.
+    </p>
+  </section>
+
+  <!-- Tokenomics -->
+  <section id="tokenomics" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Tokenomics & Distribution</h3>
+    <p class="text-gray-800">
+      The total supply of XLMFISH is 1,000,000,000 tokens. We are committed to transparency for allocations and on-chain balances; current distribution information will be clarified and linked to verifiable accounts where appropriate.
+    </p>
+
+    <div class="mt-4">
+      <table class="w-full text-sm border-collapse">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left font-medium text-gray-700">Allocation</th>
+            <th class="px-3 py-2 text-right font-medium text-gray-700">Amount</th>
+            <th class="px-3 py-2 text-right font-medium text-gray-700">%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t">
+            <td class="px-3 py-2 text-gray-800">Total Liquidity Pools (LP)</td>
+            <td class="px-3 py-2 text-right text-gray-800">~662,389,546</td>
+            <td class="px-3 py-2 text-right text-gray-800">~66.24%</td>
+          </tr>
+          <tr class="border-t">
+            <td class="px-3 py-2 text-gray-800">Community & Circulating</td>
+            <td class="px-3 py-2 text-right text-gray-800">~237,610,455</td>
+            <td class="px-3 py-2 text-right text-gray-800">~23.76%</td>
+          </tr>
+          <tr class="border-t">
+            <td class="px-3 py-2 text-gray-800">Founder / Team</td>
+            <td class="px-3 py-2 text-right text-gray-800">~99,999,999</td>
+            <td class="px-3 py-2 text-right text-gray-800">~10.00%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-3">
+      Note: allocations above are presented as a summary. Exact breakdowns and verifications are available on-chain and will be linked as part of future updates.
+    </p>
+  </section>
+
+  <!-- Liquidity Profile -->
+  <section id="liquidity-profile" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Liquidity Profile & Strategy</h3>
+    <p class="text-gray-800">
+      The project emphasizes measurable liquidity outcomes. The public site reports live pool data and on‑chain volumes. Initial liquidity is distributed across multiple pools to encourage deep, efficient markets.
+    </p>
+
+    <p class="text-gray-800 mt-3">
+      Over time, our objective is to transition toward self‑managed liquidity strategies that improve capital efficiency and reduce slippage for traders. We will publish specific strategies and performance metrics as they are finalized.
+    </p>
+  </section>
+
+  <!-- Technical & Accessibility Standards -->
+  <section id="design" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Technical & Accessibility Standards</h3>
+    <p class="text-gray-800">
+      We prioritize technical compliance and accessibility to foster user trust and seamless ecosystem integration. Where applicable, we will publish configuration files (for example, stellar.toml) and documentation to support third‑party tooling and wallets.
+    </p>
+
+    <ul class="list-disc ml-6 mt-3 text-gray-800">
+      <li>Accessible, mobile-first UI and clear data visualizations.</li>
+      <li>Public data sources and verifiable on-chain references.</li>
+      <li>Progressive enhancement: dashboards work with or without JS where feasible.</li>
+    </ul>
+  </section>
+
+  <!-- Goals and Scope -->
+  <section id="goals" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Goals and Scope</h3>
+    <ul class="list-disc ml-6 text-gray-800">
+      <li>Support healthier markets (reduced slippage, deeper liquidity)</li>
+      <li>Provide transparent, data-driven reporting and dashboards</li>
+      <li>Iterate with community feedback and prioritize usability</li>
+    </ul>
+  </section>
+
+  <!-- Governance -->
+  <section id="governance" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-6">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Governance (to be defined)</h3>
+    <p class="text-gray-800">
+      Governance structure, participation, and decision-making processes are not yet finalized. We will draft governance proposals and consult the community before taking any governance-related actions.
+    </p>
+  </section>
+
+  <!-- Risks -->
+  <section id="risks" class="max-w-3xl mx-auto py-8 px-6 bg-white rounded-lg shadow mb-10">
+    <h3 class="text-xl font-semibold mb-3 text-primary">Risks and Disclosures</h3>
+    <ul class="list-disc ml-6 space-y-2 text-gray-800">
+      <li>This document is a draft; contents are subject to change.</li>
+      <li>Nothing herein is financial, investment, or legal advice.</li>
+      <li>On-chain data and third-party APIs may be incomplete, delayed, or inaccurate.</li>
+    </ul>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // small helper to show last-updated time
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = document.getElementById('last-updated');
+      if (el) el.textContent = 'Last updated: ' + new Date().toLocaleString();
+    });
+  </script>
+{% endblock %}

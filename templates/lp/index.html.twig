@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}XLMFISH Liquidity Pools – Live Pool Metrics{% endblock %}
+
+{% block body %}
+  <section class="bg-primary text-white py-20 text-center px-6">
+    <img src="{{ asset('xlmfish_sm.png') }}" alt="XLMFISH Logo" class="w-28 h-28 mx-auto mb-4">
+    <h1 class="text-4xl font-bold mb-2">Liquidity Pools</h1>
+    <p class="text-lg">Live XLMFISH pool metrics and rankings on Stellar mainnet</p>
+  </section>
+
+  <section id="introduction" class="max-w-4xl mx-auto py-12 px-6 text-center">
+    <h2 class="text-3xl font-semibold mb-4 text-secondary">About Liquidity Pools</h2>
+    <p class="text-lg">
+      This page lists current liquidity pools that contain XLMFISH (no change to which pools are included).
+      Liquidity is reported in total XLMFISH units for consistency, with approximate USD values when available.
+    </p>
+    <p class="text-sm text-gray-500 mt-3">
+      Data sources: Stellar Horizon (mainnet) and CoinGecko (XLM/USD). Values are approximate and for informational purposes only.
+    </p>
+  </section>
+
+  <section class="bg-white py-12 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow">
+        <i data-feather="trending-up" class="w-12 h-12 mb-4 text-primary"></i>
+        <h3 class="text-xl font-semibold mb-2 text-primary">Total Liquidity (XLMFISH)</h3>
+        <p class="text-3xl font-bold text-gray-900" id="total-liquidity">—</p>
+        <p class="text-xs text-gray-500 mt-2" id="total-liquidity-usd">≈ —</p>
+      </div>
+      <div class="flex flex-col items-center p-8 border-l-4 border-green1 rounded-lg shadow">
+        <i data-feather="list" class="w-12 h-12 mb-4 text-green1"></i>
+        <h3 class="text-xl font-semibold mb-2 text-green1">Top 10 Pools</h3>
+        <ul class="text-sm text-gray-700 space-y-2 w-full text-left" id="top-10-pools"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-4xl mx-auto py-12 px-6">
+    <h2 class="text-2xl font-semibold mb-8 text-center text-secondary">Top Pools by Size</h2>
+    <div class="flex justify-center">
+      <canvas id="distributionChart" class="max-w-lg"></canvas>
+    </div>
+    <p class="text-center text-xs text-gray-500 mt-3">
+      Top liquidity pools by size; remaining liquidity is grouped as Other.
+    </p>
+  </section>
+
+  <section class="bg-white py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-6 text-secondary">All Pools</h2>
+      <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <input type="text" id="search-input" placeholder="Search pools..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+        <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+          <option value="usd-desc" selected>Highest USD</option>
+          <option value="usd-asc">Lowest USD</option>
+          <option value="liquidity-desc">Highest XLMFISH</option>
+          <option value="liquidity-asc">Lowest XLMFISH</option>
+          <option value="name-asc">Name A→Z</option>
+          <option value="name-desc">Name Z→A</option>
+        </select>
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">#</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Pool</th>
+              <th class="px-4 py-3 text-right font-semibold text-gray-700">Liquidity (XLMFISH)</th>
+              <th class="px-4 py-3 text-right font-semibold text-gray-700">≈ USD</th>
+              <th class="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
+            </tr>
+          </thead>
+          <tbody id="pools-table-body"></tbody>
+        </table>
+      </div>
+      <div class="mt-4 text-center text-gray-600" id="loading-message">Loading pools from Horizon (mainnet)...</div>
+      <p class="text-center text-xs text-gray-500 mt-2" id="pools-updated">—</p>
+    </div>
+  </section>
+
+  <footer class="bg-white text-gray-500 border-t border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-xs">
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="{{ path('home') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="home" class="w-3 h-3"></i><span>Home</span></a>
+        <a href="{{ path('lp_index') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="bar-chart-2" class="w-3 h-3"></i><span>Liquidity</span></a>
+        <a href="{{ path('litepaper') }}" class="inline-flex items-center gap-1 hover:text-primary"><i data-feather="file-text" class="w-3 h-3"></i><span>Litepaper</span></a>
+      </div>
+      <div class="mt-2">&copy; 2025 XLMFISH</div>
+    </div>
+  </footer>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ asset('js/cache.js') }}"></script>
+  <script src="{{ asset('js/lp-topn-chart.js') }}"></script>
+  <script src="{{ asset('js/market-overview.js') }}"></script>
+{% endblock %}
