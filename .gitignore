@@ -1,4 +1,5 @@
 # ignore local and environment overrides
+.env
 .env.local
 .env.*.local
 .env.dev
@@ -22,3 +23,4 @@
 node_modules/
 dist/
 build/
+
