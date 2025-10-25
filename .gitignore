@@ -1,5 +1,4 @@
 # ignore local and environment overrides
-.env
 .env.local
 .env.*.local
 .env.dev
