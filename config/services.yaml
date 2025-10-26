@@ -1,3 +1,9 @@
+# Import package/service config files so the container picks up files in config/packages/ and config/services/
+imports:
+  - { resource: 'packages/*.yaml' }
+  - { resource: 'packages/{{ env }}/*.yaml' }
+  - { resource: 'services/*.yaml' }
+
 # This file is the entry point to configure your own services.
 # Files in the packages/ subdirectory configure your dependencies.
 
@@ -15,6 +21,8 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        # optionally exclude folders that shouldn't be registered as services
+        # exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
