@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>xlm.fish — Something went wrong</title>
+    <style>
+      /* Minimal inline CSS so the page displays even if assets fail */
+      :root { --bg:#0f172a; --card:#0b1220; --muted:#9ca3af; --accent:#06b6d4; --white:#ffffff; }
+      html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--white)}
+      .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+      .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:2rem;max-width:720px;box-shadow:0 6px 24px rgba(2,6,23,0.7)}
+      h1{font-size:1.5rem;margin:0 0 .5rem}
+      p{color:var(--muted);margin:0 0 1rem}
+      .meta{color:#94a3b8;font-size:.9rem;margin-top:.5rem}
+      a.btn{display:inline-block;padding:.5rem .9rem;border-radius:8px;background:var(--accent);color:var(--white);text-decoration:none;margin-top:1rem}
+      .logo{display:inline-block;margin-bottom:1rem}
+      .logo svg{width:64px;height:64px}
+    </style>
+  </head>
+  <body>
+    <div class="wrap" role="main" aria-labelledby="error-title">
+      <div class="card" role="article" aria-live="polite">
+        <div class="logo" aria-hidden="true">
+          <!-- Inline branded SVG — replace with your official SVG if desired -->
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="32" r="30" fill="#0ea5a4"/>
+            <path d="M20 38c6-2 18-2 24 0" stroke="#022" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+            <path d="M24 26c4-6 16-6 20 0" stroke="#022" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+          </svg>
+        </div>
+
+        <h1 id="error-title">Sorry — something went wrong</h1>
+        <p>We couldn't complete your request. The issue has been logged and we'll investigate. Please try again later.</p>
+
+        {% if status_code is defined %}
+          <p class="meta">Error {{ status_code }} {{ status_text }}</p>
+        {% endif %}
+
+        <p>
+          <a class="btn" href="{{ path('homepage') }}">Return to homepage</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

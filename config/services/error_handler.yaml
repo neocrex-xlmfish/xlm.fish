@@ -1,0 +1,10 @@
+# Registers the ExceptionListener and passes the kernel debug flag
+services:
+  App\EventListener\ExceptionListener:
+    arguments:
+      $logger: '@logger'
+      $twig: '@twig'
+      $requestStack: '@request_stack'
+      $debug: '%kernel.debug%'
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 0 }
