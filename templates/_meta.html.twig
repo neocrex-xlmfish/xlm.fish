@@ -1,21 +1,13 @@
 {# Reusable SEO + Social meta include (safe)
-   Usage:
-   - Controller: pass a 'meta' array to the template context
-   - Or in a child template BEFORE extending base, set:
-     {% set meta = { title: 'Page title', description: '...', image: 'images/card.png', url: absolute_url(app.request.uri) } %}
-   Then include: {% include '_meta.html.twig' with {'meta': meta} %}
-#
-# This version:
-# - Never directly assumes `meta` exists (uses `meta is defined`).
-# - Guards access to app.request to avoid errors in non-HTTP contexts.
-# - Builds image/logo URLs only when relevant values exist.
-# - Exposes a block `extra_meta` for pages to inject additional tags.
+   - Never assumes `meta` exists.
+   - Guards app.request usage for non-HTTP contexts.
+   - Builds image/logo URLs only when a path exists.
+   - Exposes `extra_meta` block for per-page additions.
 #}
 
-{# Ensure we don't reference an undefined meta variable #}
 {% set _meta = meta is defined ? meta : {} %}
 
-{# Site defaults (consider moving to Twig globals/config) #}
+{# Site defaults (consider moving these to Twig globals) #}
 {% set site_defaults = {
     title: 'XLMFISH — Transparency & Analytics',
     description: 'XLMFISH: transparency, analytics, and community tools for the Stellar ecosystem.',
@@ -34,9 +26,9 @@
 {% set request_uri = (app.request is defined and app.request.uri is defined) ? app.request.uri : '' %}
 {% set url = _meta.url is defined ? _meta.url : request_uri %}
 
-{# Build absolute image/logo URLs only if asset() and absolute_url() are available and a path is present #}
-{% if image_path is defined and image_path is not empty %}
-  {% set image_url = absolute_url(asset(image_path)) %}
+{# Build absolute image/logo URLs only if the helper functions and paths are available #}
+{% if image_path is defined and image_path %}
+  {% set image_url = (absolute_url is defined and asset is defined) ? absolute_url(asset(image_path)) : image_path %}
 {% else %}
   {% set image_url = '' %}
 {% endif %}
@@ -48,7 +40,7 @@
 {% set logo_image = _meta.logo_image is defined ? _meta.logo_image : site_defaults.logo_image %}
 
 {% if logo_image is defined and logo_image %}
-  {% set logo_url = absolute_url(asset(logo_image)) %}
+  {% set logo_url = (absolute_url is defined and asset is defined) ? absolute_url(asset(logo_image)) : logo_image %}
 {% else %}
   {% set logo_url = '' %}
 {% endif %}
@@ -57,10 +49,8 @@
 <meta name="description" content="{{ description|striptags|trim|e('html_attr') }}"/>
 <meta name="robots" content="{{ _meta.robots is defined ? _meta.robots : 'index,follow' }}"/>
 
-{# Canonical: include only when we have a URL value #}
-{% if url is not empty %}
-  <link rel="canonical" href="{{ url }}"/>
-{% endif %}
+{# Canonical: only include when we have a URL #}
+{% if url is not empty %}<link rel="canonical" href="{{ url }}"/>{% endif %}
 
 {# Open Graph #}
 <meta property="og:locale" content="{{ app.request.locale is defined ? app.request.locale : 'en_US' }}"/>
@@ -68,11 +58,9 @@
 <meta property="og:title" content="{{ title }}"/>
 <meta property="og:description" content="{{ description|striptags|trim }}"/>
 {% if url is not empty %}<meta property="og:url" content="{{ url }}"/>{% endif %}
-{% if image_url %}
-  <meta property="og:image" content="{{ image_url }}"/>
-  {% if _meta.image_width is defined %}<meta property="og:image:width" content="{{ _meta.image_width }}"/>{% endif %}
-  {% if _meta.image_height is defined %}<meta property="og:image:height" content="{{ _meta.image_height }}"/>{% endif %}
-{% endif %}
+{% if image_url %}<meta property="og:image" content="{{ image_url }}"/>{% endif %}
+{% if image_url and _meta.image_width is defined %}<meta property="og:image:width" content="{{ _meta.image_width }}"/>{% endif %}
+{% if image_url and _meta.image_height is defined %}<meta property="og:image:height" content="{{ _meta.image_height }}"/>{% endif %}
 
 {# Twitter Card #}
 <meta name="twitter:card" content="{{ twitter_card }}"/>
@@ -103,5 +91,4 @@
 
 <script type="application/ld+json">{{ jsonld|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_PRETTY_PRINT'))|raw }}</script>
 
-{# Allow pages to inject extra meta tags #}
 {% block extra_meta %}{% endblock %}

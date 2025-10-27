@@ -1,17 +1,16 @@
-{# Base layout updated to safely include the SEO + social meta include.
-   Key changes:
-   - Always pass a safe default when including _meta.html.twig to avoid "Variable 'meta' does not exist."
-   - Keep blocks for head_extra, stylesheets, extra_meta, etc., so pages can override.
+{# Base layout
+   - Passes a safe default into the meta include so missing `meta` won't throw.
+   - Uses the 'home' route for the site link (user confirmed route name is 'home').
+   - Falls back to meta.url when provided.
 #}
 <!doctype html>
 <html lang="{{ (app.request.locale|default('en'))|slice(0,2) }}">
   <head>
     <meta charset="utf-8">
 
-    {# Safe include: pass an empty object when `meta` is not provided #}
+    {# include meta safely even when meta is not provided #}
     {% include '_meta.html.twig' with {'meta': meta|default({})} %}
 
-    {# Stylesheets (override in child templates if needed) #}
     {% block stylesheets %}
       <link rel="stylesheet" href="{{ asset('build/app.css') }}" />
     {% endblock %}
@@ -19,9 +18,12 @@
     {% block head_extra %}{% endblock %}
   </head>
   <body>
+    {# Prefer meta.url when set, otherwise use the 'home' route (user route name: 'home') #}
+    {% set home_url = (meta is defined and meta.url is defined and meta.url) ? meta.url : path('home') %}
+
     <header>
       <nav>
-        <a href="{{ path('homepage') }}">XLMFISH</a>
+        <a href="{{ home_url }}">XLMFISH</a>
       </nav>
     </header>
 
