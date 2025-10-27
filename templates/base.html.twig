@@ -1,58 +1,39 @@
+{# Base layout updated to include SEO + social meta include.
+   Child templates should set a `meta` variable before extending this base
+   or controllers can pass a 'meta' variable to the template context.
+#}
 <!doctype html>
-<html lang="en">
+<html lang="{{ app.request.locale|slice(0,2)|default('en') }}">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{% block title %}XLMFISH{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}XLMFISH – Stellar liquidity and analytics{% endblock %}" />
+    <meta charset="utf-8">
+    {# Include SEO + social meta. If a page set a `meta` variable, it will be used. #}
+    {% include '_meta.html.twig' with {'meta': meta}|default({}) %}
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#05668D',
-              secondary: '#427AA1',
-              lightbg: '#EBF2FA',
-              green1: '#679436',
-              green2: '#A5BE00'
-            }
-          }
-        }
-      };
-    </script>
-
-    {# favicons (replace files in public/ as needed) #}
-    <link rel="icon" href="{{ asset('favicon.ico') }}" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/apple-touch-icon.png') }}" />
-    <meta name="theme-color" content="#05668D" />
+    {# Stylesheets / assets - adjust per project tooling #}
+    {% block stylesheets %}
+      <link rel="stylesheet" href="{{ asset('build/app.css') }}" />
+    {% endblock %}
 
     {% block head_extra %}{% endblock %}
   </head>
+  <body>
+    <header>
+      {# site header / nav #}
+      <nav>
+        <a href="{{ path('homepage') }}">XLMFISH</a>
+      </nav>
+    </header>
 
-  <body class="bg-lightbg text-gray-900 font-sans">
-    {% include 'partials/_nav.html.twig' %}
-
-    <main id="main" class="min-h-screen">
+    <main id="main" role="main">
       {% block body %}{% endblock %}
     </main>
 
-    {% include 'partials/_footer.html.twig' %}
+    <footer>
+      <p>&copy; {{ "now"|date("Y") }} XLMFISH</p>
+    </footer>
 
-    {# third-party libs first (Chart.js for charts) #}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-
-    {# feather-icons + other libs #}
-    <script src="https://unpkg.com/feather-icons"></script>
-
-    {# site JS (from public/js) — use asset() so Symfony knows the path #}
-    <script src="{{ asset('js/cache.js') }}"></script>
-    <script src="{{ asset('js/market-overview.js') }}"></script>
-    <script src="{{ asset('js/lp-topn-chart.js') }}"></script>
-    <script src="{{ asset('js/lp-viewer.js') }}"></script>
-
-    <script>feather.replace();</script>
-    {% block scripts %}{% endblock %}
+    {% block javascripts %}
+      <script src="{{ asset('build/app.js') }}"></script>
+    {% endblock %}
   </body>
 </html>
