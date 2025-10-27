@@ -38,7 +38,8 @@
         {% endif %}
 
         <p>
-          <a class="btn" href="{{ path('/') }}">Return to homepage</a>
+          <!-- Safe static link: do NOT call path() here -->
+          <a class="btn" href="/">Return to homepage</a>
         </p>
       </div>
     </div>
