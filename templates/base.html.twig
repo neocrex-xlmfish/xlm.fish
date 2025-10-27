@@ -1,15 +1,17 @@
-{# Base layout updated to include SEO + social meta include.
-   Child templates should set a `meta` variable before extending this base
-   or controllers can pass a 'meta' variable to the template context.
+{# Base layout updated to safely include the SEO + social meta include.
+   Key changes:
+   - Always pass a safe default when including _meta.html.twig to avoid "Variable 'meta' does not exist."
+   - Keep blocks for head_extra, stylesheets, extra_meta, etc., so pages can override.
 #}
 <!doctype html>
-<html lang="{{ app.request.locale|slice(0,2)|default('en') }}">
+<html lang="{{ (app.request.locale|default('en'))|slice(0,2) }}">
   <head>
     <meta charset="utf-8">
-    {# Include SEO + social meta. If a page set a `meta` variable, it will be used. #}
-    {% include '_meta.html.twig' with {'meta': meta}|default({}) %}
 
-    {# Stylesheets / assets - adjust per project tooling #}
+    {# Safe include: pass an empty object when `meta` is not provided #}
+    {% include '_meta.html.twig' with {'meta': meta|default({})} %}
+
+    {# Stylesheets (override in child templates if needed) #}
     {% block stylesheets %}
       <link rel="stylesheet" href="{{ asset('build/app.css') }}" />
     {% endblock %}
@@ -18,7 +20,6 @@
   </head>
   <body>
     <header>
-      {# site header / nav #}
       <nav>
         <a href="{{ path('homepage') }}">XLMFISH</a>
       </nav>
