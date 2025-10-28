@@ -27,6 +27,71 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/apple-touch-icon.png') }}" />
     <meta name="theme-color" content="#05668D" />
 
+    {# --- Theme variables + small overrides for Tailwind classes --- #}
+    <style>
+      :root{
+        --bg: #ffffff;
+        --fg: #0f1724;
+        --muted: #6b7280;
+        --accent: #05668D;
+        --header-bg: rgba(255,255,255,0.9);
+        --header-border: rgba(0,0,0,0.06);
+        --footer-bg: #ffffff;
+      }
+      /* dark theme variables */
+      .dark {
+        --bg: #071026;
+        --fg: #e6eef8;
+        --muted: #9aa6b2;
+        --accent: #60a5fa;
+        --header-bg: rgba(7,16,38,0.6);
+        --header-border: rgba(255,255,255,0.06);
+        --footer-bg: #071026;
+      }
+
+      /* Apply page-level background and text color (use !important to override utility classes where needed) */
+      body {
+        background: var(--bg) !important;
+        color: var(--fg) !important;
+      }
+
+      /* Header/footer overrides: attach theme-aware classes to partials */
+      .theme-header {
+        background: var(--header-bg) !important;
+        border-bottom-color: var(--header-border) !important;
+      }
+      .theme-footer {
+        background: var(--footer-bg) !important;
+        color: var(--muted) !important;
+        border-top-color: var(--header-border) !important;
+      }
+
+      /* Links and nav items - provide good contrast in both modes */
+      .theme-link {
+        color: var(--fg) !important;
+      }
+      .theme-link:hover {
+        color: var(--accent) !important;
+      }
+      .theme-muted {
+        color: var(--muted) !important;
+      }
+
+      /* Small theme toggle styling (keeps look consistent with nav) */
+      #theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .35rem .5rem;
+        border-radius: .5rem;
+        border: 1px solid transparent;
+      }
+      .theme-toggle-active {
+        background: var(--accent);
+        color: #fff;
+      }
+    </style>
+
     {% block head_extra %}{% endblock %}
   </head>
 
@@ -52,6 +117,67 @@
     <script src="{{ asset('js/lp-viewer.js') }}"></script>
 
     <script>feather.replace();</script>
+
+    {# --- Theme toggle behavior: respects system pref, persists to localStorage --- #}
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const toggle = document.getElementById('theme-toggle');
+
+        function applyTheme(theme) {
+          if (theme === 'dark') {
+            root.classList.add('dark');
+            if (toggle) {
+              toggle.setAttribute('aria-pressed', 'true');
+              toggle.classList.add('theme-toggle-active');
+            }
+          } else {
+            root.classList.remove('dark');
+            if (toggle) {
+              toggle.setAttribute('aria-pressed', 'false');
+              toggle.classList.remove('theme-toggle-active');
+            }
+          }
+        }
+
+        function save(theme) {
+          try { localStorage.setItem('theme', theme); } catch (e) { /* ignore */ }
+        }
+
+        // initial theme: stored preference wins, otherwise system preference
+        let stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) { /* ignore */ }
+
+        if (stored === 'dark' || (!stored && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          applyTheme('dark');
+        } else {
+          applyTheme('light');
+        }
+
+        // attach handler to toggle (toggle element is declared in _nav)
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            const isDark = root.classList.contains('dark');
+            const next = isDark ? 'light' : 'dark';
+            applyTheme(next);
+            save(next);
+          });
+        }
+
+        // sync with system changes only if user hasn't set a preference
+        if (window.matchMedia) {
+          const mq = window.matchMedia('(prefers-color-scheme: dark)');
+          mq.addEventListener && mq.addEventListener('change', function (e) {
+            try {
+              if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+              }
+            } catch (err) { /* ignore */ }
+          });
+        }
+      })();
+    </script>
+
     {% block scripts %}{% endblock %}
   </body>
 </html>
