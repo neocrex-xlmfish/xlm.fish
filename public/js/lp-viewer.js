@@ -17,7 +17,7 @@
   function poolNameFromReserves(reserves) { if (!Array.isArray(reserves) || reserves.length < 2) return '—'; const a = assetShort(reserves[0].asset); const b = assetShort(reserves[1].asset); return `${a}/${b}`; }
   function fishReserveFromReserves(reserves) { const fish = (reserves || []).find(r => r.asset === FISH_ASSET); return fish ? num(fish.amount) : 0; }
 
-  async function getJSON(url, opts) { if (typeof window.cachedJSON === 'function') return window.cachedJSON(url, opts || {}); const res = await fetch(url); if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${url}`); return res.json(); }
+  async function getJSON(url, opts) { if (typeof window.cachedJSON === 'function') return window.cachedJSON(url, opts || {}); const res = await fetch(url); if (!res.ok) throw new Error(`Fetch failed ${res.status} ${res.statusText}`); return res.json(); }
 
   async function fetchFishUsdPrice() {
     const params = new URLSearchParams({ base_asset_type:'credit_alphanum12', base_asset_code:ASSET_CODE, base_asset_issuer:ASSET_ISSUER, counter_asset_type:'native', resolution:String(24*60*60*1000), limit:'1', order:'desc' });
@@ -50,16 +50,6 @@
     if (totalEl) totalEl.textContent = `${totalFish.toLocaleString()} XLMFISH`;
     const totalUsdEl = document.getElementById('total-liquidity-usd');
     if (totalUsdEl) totalUsdEl.textContent = (priceUsd != null) ? `≈ ${fmtUsd2(totalFish * priceUsd)}` : '≈ —';
-
-    const top10 = allPools.slice().sort((a, b) => num(b.liquidityFish) - num(a.liquidityFish)).slice(0, 10);
-    const top10El = document.getElementById('top-10-pools');
-    if (top10El) {
-      top10El.innerHTML = top10.map((p, i) => {
-        const fishText = p.liquidityFish ? `${p.liquidityFish.toLocaleString()} XLMFISH` : '—';
-        const usdText = (priceUsd != null && p.liquidityFish) ? ` (≈ ${fmtUsd2(p.liquidityFish * priceUsd)})` : '';
-        return `<li>${i + 1}. ${p.name} — ${fishText}${usdText}</li>`;
-      }).join('');
-    }
   }
 
   function renderTable() {
@@ -67,17 +57,16 @@
     if (!tbody) return;
     tbody.innerHTML = '';
     filteredPools.forEach((p, index) => {
-      const statusBadge = p.status === 'active' ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>' : '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Inactive</span>';
       const fish = p.liquidityFish ? `${p.liquidityFish.toLocaleString()} XLMFISH` : '—';
       const usd = (priceUsd != null && p.liquidityFish) ? fmtUsd2(p.liquidityFish * priceUsd) : '—';
       const row = document.createElement('tr');
+      // keep classes that are theme-aware via .theme-card overrides in CSS
       row.className = 'border-b border-gray-200 hover:bg-gray-50 transition-colors';
       row.innerHTML = `
         <td class="px-4 py-3 text-gray-600">${index + 1}</td>
         <td class="px-4 py-3 font-medium text-gray-900">${p.name}</td>
-        <td class="px-4 py-3 text-right text-gray-900">${fish}</td>
         <td class="px-4 py-3 text-right text-gray-900">${usd}</td>
-        <td class="px-4 py-3 text-center">${statusBadge}</td>
+        <td class="px-4 py-3 text-right text-gray-900">${fish}</td>
       `;
       tbody.appendChild(row);
     });
@@ -113,6 +102,36 @@
       sort.addEventListener('change', () => {
         sortFilteredByCurrent();
         renderTable();
+      });
+    }
+
+    const refresh = document.getElementById('lp-refresh');
+    if (refresh) {
+      refresh.addEventListener('click', async () => {
+        // show loading, re-run init sequence
+        const loading = document.getElementById('loading-message');
+        if (loading) loading.textContent = 'Refreshing…';
+        try {
+          priceUsd = await fetchFishUsdPrice();
+          const pools = await loadPoolsFromHorizon();
+          pools.forEach(p => { p.usdValue = (priceUsd != null) ? num(p.liquidityFish) * priceUsd : null; });
+          allPools = pools;
+          filteredPools = pools.slice();
+          sortFilteredByCurrent();
+          updateMetrics();
+          renderTable();
+          if (typeof renderTopNPieChart === 'function') {
+            try {
+              renderTopNPieChart('distributionChart', allPools, { metric: (priceUsd != null) ? 'usd' : 'fish', minOtherPct: 0.01 });
+            } catch (e) { console.warn('Chart render failed', e); }
+          }
+          if (loading) loading.style.display = 'none';
+          const updated = document.getElementById('pools-updated');
+          if (updated) updated.textContent = 'Updated ' + new Date().toLocaleString();
+        } catch (e) {
+          console.error(e);
+          if (loading) loading.textContent = 'Error refreshing data';
+        }
       });
     }
   }

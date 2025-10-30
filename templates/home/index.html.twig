@@ -20,34 +20,37 @@
   </section>
 
   <!-- Market Overview -->
-  <section id="market-overview" class="bg-white py-12 px-6">
+  {# Use theme-section on the wrapper and theme-card on each card so colors flip in dark mode #}
+  <section id="market-overview" class="py-12 px-6 theme-section">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-2xl font-semibold mb-6 text-secondary text-center">Market Overview</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow">
+        <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow theme-card">
           <i data-feather="dollar-sign" class="w-12 h-12 mb-4 text-primary"></i>
-          <h3 class="text-lg font-semibold mb-1 text-primary">Price (USD)</h3>
+          <h3 class="text-lg font-semibold mb-1 heading-accent">Price (USD)</h3>
           <p class="text-2xl font-bold" id="price-usd">—</p>
-          <p class="text-xs text-gray-500 mt-2">Stellar DEX + CoinGecko (XLM/USD)</p>
+          <p class="text-xs muted mt-2">per token</p>
         </div>
-        <div class="flex flex-col items-center p-8 border-l-4 border-green1 rounded-lg shadow">
-          <i data-feather="activity" class="w-12 h-12 mb-4 text-green1"></i>
-          <h3 class="text-lg font-semibold mb-1 text-green1">Volume (24h USD)</h3>
+
+        <div class="flex flex-col items-center p-8 border-l-4 border-green2 rounded-lg shadow theme-card">
+          <i data-feather="trending-up" class="w-12 h-12 mb-4 text-green2"></i>
+          <h3 class="text-lg font-semibold mb-1 heading-accent">24h Volume (USD)</h3>
           <p class="text-2xl font-bold" id="volume-24h-usd">—</p>
-          <p class="text-xs text-gray-500 mt-2">Sum across active XLMFISH pairs</p>
+          <p class="text-xs muted mt-2">across pools</p>
         </div>
-        <div class="flex flex-col items-center p-8 border-l-4 border-green2 rounded-lg shadow">
-          <i data-feather="pie-chart" class="w-12 h-12 mb-4 text-green2"></i>
-          <h3 class="text-lg font-semibold mb-1 text-green2">Market Cap (USD)</h3>
+
+        <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow theme-card">
+          <i data-feather="pie-chart" class="w-12 h-12 mb-4 text-primary"></i>
+          <h3 class="text-lg font-semibold mb-1 heading-accent">Market Cap (USD)</h3>
           <p class="text-2xl font-bold" id="market-cap-usd">—</p>
-          <p class="text-xs text-gray-500 mt-2">approximate (amount × price)</p>
+          <p class="text-xs muted mt-2">approximate (amount × price)</p>
         </div>
       </div>
 
-      <p class="text-center text-xs text-gray-500 mt-4" id="market-updated">Fetching live data...</p>
+      <p class="text-center text-xs muted mt-4" id="market-updated">Fetching live data...</p>
 
       {# Short, user-facing disclaimer under market overview #}
-      <p class="text-center text-xs text-gray-500 mt-3">
+      <p class="text-center text-xs muted mt-3">
         XLMFISH is an experimental token and project on the Stellar blockchain. This site is provided for informational purposes only and does not constitute financial, investment, or legal advice.
       </p>
     </div>
@@ -58,7 +61,6 @@
 
   {# CTA partial (Get XLMFISH + disclaimer) #}
   {% include 'home/_cta.html.twig' %}
-
 {% endblock %}
 
 {% block scripts %}

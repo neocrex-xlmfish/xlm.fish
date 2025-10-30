@@ -29,16 +29,25 @@
 
     {# --- Theme variables + small overrides for Tailwind classes --- #}
     <style>
-      :root{
+      /* Page-level theme variables */
+      :root {
         --bg: #ffffff;
         --fg: #0f1724;
         --muted: #6b7280;
         --accent: #05668D;
         --header-bg: rgba(255,255,255,0.9);
         --header-border: rgba(0,0,0,0.06);
-        --footer-bg: #ffffff;
+
+        /* Market / card defaults */
+        --card-bg: #ffffff;
+        --card-fg: #0f1724;
+        --card-muted: #6b7280;
+        --card-border: rgba(0,0,0,0.06);
+        --card-header-bg: #f8fafc; /* light table header background */
+        --card-row-hover: #f8fafc;  /* light hover row */
       }
-      /* dark theme variables */
+
+      /* Dark theme overrides */
       .dark {
         --bg: #071026;
         --fg: #e6eef8;
@@ -46,38 +55,72 @@
         --accent: #60a5fa;
         --header-bg: rgba(7,16,38,0.6);
         --header-border: rgba(255,255,255,0.06);
-        --footer-bg: #071026;
+
+        --card-bg: #071726;       /* slightly lighter than page bg for separation */
+        --card-fg: #e6eef8;
+        --card-muted: #9aa6b2;
+        --card-border: rgba(255,255,255,0.06);
+        --card-header-bg: rgba(255,255,255,0.03); /* subtle header in dark mode */
+        --card-row-hover: rgba(255,255,255,0.02);
       }
 
-      /* Apply page-level background and text color (use !important to override utility classes where needed) */
-      body {
+      /* Apply page-level background and text color */
+      html, body {
         background: var(--bg) !important;
         color: var(--fg) !important;
       }
 
-      /* Header/footer overrides: attach theme-aware classes to partials */
-      .theme-header {
-        background: var(--header-bg) !important;
-        border-bottom-color: var(--header-border) !important;
+      /* Theme helper classes */
+      .theme-section { background: transparent; }
+      .theme-card {
+        background: var(--card-bg) !important;
+        color: var(--card-fg) !important;
+        border-color: var(--card-border) !important;
       }
-      .theme-footer {
-        background: var(--footer-bg) !important;
-        color: var(--muted) !important;
-        border-top-color: var(--header-border) !important;
+      .theme-card thead { background: var(--card-header-bg) !important; }
+      .theme-card .muted { color: var(--card-muted) !important; }
+      .theme-card .heading-accent { color: var(--accent) !important; }
+
+      /* Make .theme-link a convenience class for elements that should follow theme fg */
+      .theme-link { color: var(--fg) !important; }
+      .theme-link:hover { color: var(--accent) !important; }
+
+      /* table row hover, border and text overrides inside theme-card so JS-inserted classes remain readable */
+      .theme-card .border-gray-200 { border-color: var(--card-border) !important; }
+      .theme-card .text-gray-900 { color: var(--card-fg) !important; }
+      .theme-card .text-gray-600 { color: var(--card-muted) !important; }
+      .theme-card .hover\:bg-gray-50:hover { background: var(--card-row-hover) !important; }
+
+      /* Header/footer icon visibility (Feather icons use stroke='currentColor' and inherit color) */
+      .theme-header [data-feather],
+      .theme-header svg,
+      .theme-header i {
+        color: var(--fg) !important;
+        stroke: currentColor !important;
+        fill: none !important;
       }
 
-      /* Links and nav items - provide good contrast in both modes */
-      .theme-link {
-        color: var(--fg) !important;
-      }
-      .theme-link:hover {
+      /* Slightly accent icons on hover to show interactivity */
+      .theme-header a:hover [data-feather],
+      .theme-header a:hover svg,
+      .theme-header a:hover i {
         color: var(--accent) !important;
       }
-      .theme-muted {
-        color: var(--muted) !important;
+
+      /* Footer icons also follow fg in both modes */
+      .theme-footer [data-feather],
+      .theme-footer svg,
+      .theme-footer i {
+        color: var(--fg) !important;
+        stroke: currentColor !important;
+        fill: none !important;
       }
 
-      /* Small theme toggle styling (keeps look consistent with nav) */
+      /* Ensure any inline icon classes that set stroke or fill are overridden in themed areas */
+      .theme-header [data-feather] * { stroke: currentColor !important; }
+      .theme-footer [data-feather] * { stroke: currentColor !important; }
+
+      /* Small theme toggle styling */
       #theme-toggle {
         display: inline-flex;
         align-items: center;
@@ -85,6 +128,7 @@
         padding: .35rem .5rem;
         border-radius: .5rem;
         border: 1px solid transparent;
+        background: transparent;
       }
       .theme-toggle-active {
         background: var(--accent);
@@ -123,20 +167,27 @@
       (function () {
         const root = document.documentElement;
         const toggle = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-toggle-icon');
+        // label may be a span.theme-muted inside the button or an element with id theme-toggle-label
+        const label = toggle ? (toggle.querySelector('.theme-muted') || document.getElementById('theme-toggle-label')) : null;
 
-        function applyTheme(theme) {
+        function setUIFor(theme) {
           if (theme === 'dark') {
             root.classList.add('dark');
             if (toggle) {
               toggle.setAttribute('aria-pressed', 'true');
               toggle.classList.add('theme-toggle-active');
             }
+            if (icon) icon.textContent = '☀️';
+            if (label) label.textContent = 'Light';
           } else {
             root.classList.remove('dark');
             if (toggle) {
               toggle.setAttribute('aria-pressed', 'false');
               toggle.classList.remove('theme-toggle-active');
             }
+            if (icon) icon.textContent = '🌙';
+            if (label) label.textContent = 'Dark';
           }
         }
 
@@ -144,33 +195,34 @@
           try { localStorage.setItem('theme', theme); } catch (e) { /* ignore */ }
         }
 
-        // initial theme: stored preference wins, otherwise system preference
+        // initialize: stored preference wins, otherwise system preference
         let stored = null;
         try { stored = localStorage.getItem('theme'); } catch (e) { /* ignore */ }
 
-        if (stored === 'dark' || (!stored && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          applyTheme('dark');
+        if (stored) {
+          setUIFor(stored);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setUIFor('dark');
         } else {
-          applyTheme('light');
+          setUIFor('light');
         }
 
-        // attach handler to toggle (toggle element is declared in _nav)
+        // attach click handler
         if (toggle) {
           toggle.addEventListener('click', function () {
-            const isDark = root.classList.contains('dark');
-            const next = isDark ? 'light' : 'dark';
-            applyTheme(next);
+            const next = root.classList.contains('dark') ? 'light' : 'dark';
+            setUIFor(next);
             save(next);
           });
         }
 
-        // sync with system changes only if user hasn't set a preference
+        // sync with system theme changes only if user hasn't set a preference
         if (window.matchMedia) {
           const mq = window.matchMedia('(prefers-color-scheme: dark)');
           mq.addEventListener && mq.addEventListener('change', function (e) {
             try {
               if (!localStorage.getItem('theme')) {
-                applyTheme(e.matches ? 'dark' : 'light');
+                setUIFor(e.matches ? 'dark' : 'light');
               }
             } catch (err) { /* ignore */ }
           });
