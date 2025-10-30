@@ -1,8 +1,6 @@
 <section class="py-12 px-6">
   <div class="max-w-3xl mx-auto theme-card rounded-2xl shadow border p-6 text-center">
     <h2 class="text-2xl font-semibold heading-accent mb-1">Get XLMFISH</h2>
-    <p class="theme-muted mb-6">GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT</p>
-    <p class="theme-muted mb-6">XLMFISH</p>
     <p class="theme-muted mb-6">Trade and explore on supported platforms</p>
 
     <div class="flex flex-col sm:flex-row justify-center gap-3">
@@ -10,19 +8,91 @@
          target="_blank" rel="noopener"
          class="inline-flex items-center gap-2 rounded-full px-6 py-3 text-white bg-secondary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary/30 transition">
         <i data-feather="external-link" class="w-4 h-4"></i>
-        <span>lu.meme</span>
+        <span>Buy / Trade</span>
       </a>
 
-      <a href="https://lumoscore.com/launchpad/XLMFISH-GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
-         target="_blank" rel="noopener"
-         class="inline-flex items-center gap-2 rounded-full px-6 py-3 text-white bg-[#FF7B1B] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#FF7B1B]/30 transition">
-        <i data-feather="external-link" class="w-4 h-4"></i>
-        <span>Lumos Launchpad</span>
+      <a href="{{ path('litepaper') }}" class="inline-flex items-center gap-2 rounded-full px-6 py-3 border border-transparent text-secondary bg-transparent hover:bg-secondary/5 transition">
+        <i data-feather="file-text" class="w-4 h-4"></i>
+        <span>Read the Litepaper</span>
       </a>
+    </div>
+
+    {# Issuer display + copy action — full address on md+, compressed on small screens #}
+    <div class="mt-6 text-sm">
+      <div class="inline-flex items-center justify-center gap-2">
+        <span class="text-xs theme-muted">Issuer:</span>
+
+        {# Full address visible on md+ screens; breaks/wraps if needed #}
+        <span id="issuer-full-cta" class="hidden md:inline break-all select-all ml-2">
+          GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT
+        </span>
+
+        {# Compressed address visible on small screens only; clickable for copy #}
+        <span id="issuer-short-cta" class="inline md:hidden ml-2 cursor-pointer underline" title="Copy issuer address">
+          GAX3Y..ABTEMT
+        </span>
+
+        {# Copy button (visible on all sizes). Icon from feather — replaced by feather.replace() #}
+        <button id="issuer-copy-cta"
+                class="inline-flex items-center gap-2 ml-2 px-2 py-1 rounded border border-current/10 bg-current/5 hover:bg-current/10 text-sm text-current"
+                aria-label="Copy issuer address"
+                title="Copy issuer address">
+          <i data-feather="copy" class="w-4 h-4"></i>
+          <span class="sr-only">Copy issuer address</span>
+        </button>
+
+        {# Visible feedback after copy #}
+        <span id="issuer-copied-cta" role="status" aria-live="polite" class="ml-2 text-xs opacity-90 hidden">Copied!</span>
+      </div>
     </div>
 
     <p class="text-xs theme-muted mt-4">
       Nothing on this site constitutes financial, investment, or legal advice. Always conduct your own research and consult with a qualified professional before making financial decisions.
     </p>
   </div>
+
+  <script>
+    // CTA-specific copy issuer behavior. Uses same logic as hero's copy button but scoped to CTA ids.
+    (function () {
+      const FULL_ADDR = 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT';
+      const copyBtn = document.getElementById('issuer-copy-cta');
+      const shortEl = document.getElementById('issuer-short-cta');
+      const feedback = document.getElementById('issuer-copied-cta');
+
+      function showFeedback(msg = 'Copied!') {
+        if (!feedback) return;
+        feedback.textContent = msg;
+        feedback.classList.remove('hidden');
+        setTimeout(() => {
+          feedback.classList.add('hidden');
+          feedback.textContent = 'Copied!';
+        }, 1400);
+      }
+
+      async function doCopy() {
+        if (!navigator.clipboard) {
+          // Fallback: select & execCommand copy
+          const ta = document.createElement('textarea');
+          ta.value = FULL_ADDR;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); showFeedback(); } catch (e) { console.error(e); showFeedback('Copy failed'); }
+          document.body.removeChild(ta);
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(FULL_ADDR);
+          showFeedback();
+        } catch (e) {
+          console.error('Copy failed', e);
+          showFeedback('Copy failed');
+        }
+      }
+
+      if (copyBtn) copyBtn.addEventListener('click', doCopy);
+      if (shortEl) shortEl.addEventListener('click', doCopy);
+    })();
+  </script>
 </section>
