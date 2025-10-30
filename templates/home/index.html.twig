@@ -13,14 +13,33 @@
     <img src="{{ asset('xlmfish_sm.png') }}" alt="XLMFISH Logo" class="w-32 h-32 mx-auto mb-4">
     <h1 class="text-4xl font-bold mb-2">XLMFISH</h1>
     <p class="text-lg">Overview and live metrics on the Stellar network</p>
+
+    {# Issuer: show compressed on small screens, full address on md+; include explicit copy button with feedback #}
     <p class="text-sm opacity-90 mt-2">
       Asset: XLMFISH | Issuer:
-      <span id="issuer" class="cursor-pointer underline" onclick="navigator.clipboard.writeText('GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT')">GAX3Y..ABTEMT</span>
+      <span class="inline-flex items-center gap-2">
+        {# Full address visible on md+ screens; breaks if needed #}
+        <span id="issuer-full" class="hidden md:inline break-all select-all">GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT</span>
+
+        {# Compressed address visible on small screens only; clickable for copy #}
+        <span id="issuer-short" class="inline md:hidden cursor-pointer underline" title="Copy issuer address">GAX3Y..ABTEMT</span>
+
+        {# Copy button (visible on all sizes). Icon from feather – will be replaced by feather.replace() #}
+        <button id="issuer-copy"
+                class="inline-flex items-center gap-2 ml-2 px-2 py-1 rounded border border-white/20 bg-white/10 hover:bg-white/20 text-white text-sm"
+                aria-label="Copy issuer address"
+                title="Copy issuer address">
+          <i data-feather="copy" class="w-4 h-4"></i>
+          <span class="sr-only">Copy issuer address</span>
+        </button>
+
+        {# Accessible and visible feedback; shown briefly after copy #}
+        <span id="issuer-copied" role="status" aria-live="polite" class="ml-2 text-xs opacity-90 hidden">Copied!</span>
+      </span>
     </p>
   </section>
 
   <!-- Market Overview -->
-  {# Use theme-section on the wrapper and theme-card on each card so colors flip in dark mode #}
   <section id="market-overview" class="py-12 px-6 theme-section">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-2xl font-semibold mb-6 text-secondary text-center">Market Overview</h2>
@@ -67,4 +86,50 @@
   {# feather-icons replacement and site scripts; Chart.js is included in base if needed #}
   <script>feather.replace();</script>
 
+  <script>
+    // Copy issuer address behavior with visible feedback.
+    document.addEventListener('DOMContentLoaded', () => {
+      const FULL_ADDR = 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT';
+      const copyBtn = document.getElementById('issuer-copy');
+      const shortEl = document.getElementById('issuer-short');
+      const feedback = document.getElementById('issuer-copied');
+
+      async function doCopy() {
+        if (!navigator.clipboard) {
+          // Fallback: select & execCommand
+          const ta = document.createElement('textarea');
+          ta.value = FULL_ADDR;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch (e) { console.error(e); }
+          document.body.removeChild(ta);
+          showFeedback();
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(FULL_ADDR);
+          showFeedback();
+        } catch (e) {
+          console.error('Copy failed', e);
+          // still show feedback with error text briefly
+          showFeedback('Copy failed');
+        }
+      }
+
+      function showFeedback(msg = 'Copied!') {
+        if (!feedback) return;
+        feedback.textContent = msg;
+        feedback.classList.remove('hidden');
+        setTimeout(() => {
+          feedback.classList.add('hidden');
+          feedback.textContent = 'Copied!';
+        }, 1600);
+      }
+
+      if (copyBtn) copyBtn.addEventListener('click', doCopy);
+      if (shortEl) shortEl.addEventListener('click', doCopy);
+    });
+  </script>
 {% endblock %}
