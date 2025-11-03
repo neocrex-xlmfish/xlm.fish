@@ -1,0 +1,54 @@
+{# 
+  Partial: Embeds StellarExpert price widget for an asset.
+  Usage:
+    {% include 'partials/_asset_price_widget.html.twig' with {
+        asset_code: 'XLMFISH',
+        asset_issuer: 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT',
+        caption: 'Live price (StellarExpert)'
+    } %}
+  Notes:
+  - Responsive and theme-aware via .theme-card wrapper.
+  - Accessible: region role, descriptive title, and a noscript fallback link.
+  - Keeps the widget's resize postMessage listener from StellarExpert so the iframe grows/shrinks to fit.
+#}
+
+{%- set asset_code   = asset_code  |default('XLMFISH') -%}
+{%- set asset_issuer = asset_issuer |default('GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT') -%}
+{%- set caption      = caption     |default('Live price (StellarExpert)') -%}
+{%- set widget_src   = 'https://stellar.expert/widget/public/asset/price/' ~ asset_code ~ '-' ~ asset_issuer -%}
+
+<figure class="theme-card rounded-lg p-4 shadow border mb-4" role="region" aria-labelledby="asset-widget-{{ asset_code }}-label">
+  <div class="flex items-center justify-between mb-3">
+    <figcaption id="asset-widget-{{ asset_code }}-label" class="font-semibold heading-accent">
+      {{ caption }}
+      <span class="text-sm theme-muted ml-2 font-mono">{{ asset_code }}‑{{ asset_issuer|slice(0,6) }}…{{ asset_issuer|slice(-6) }}</span>
+    </figcaption>
+
+    <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="text-sm theme-link hover:underline ml-3">
+      View on StellarExpert
+      <i data-feather="external-link" class="w-4 h-4 inline-block ml-1" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <div class="w-full overflow-hidden">
+    <iframe
+      id="asset-price-widget-{{ asset_code }}-{{ asset_issuer|slice(0,8) }}"
+      title="Price widget for {{ asset_code }} (StellarExpert)"
+      src="{{ widget_src }}"
+      loading="lazy"
+      onload="(function(){var c=this;window.addEventListener('message',function(e){try{const {data,source}=e;if(c&&source===c.contentWindow&&data&&data.widget===c.src){c.style.height=(data.height||c.scrollHeight||200)+'px'}}catch(err){/* ignore */}},false);})();"
+      style="border:none;overflow:hidden;max-width:100%;min-width:300px;max-height:100%;min-height:200px;width:100%;"
+      sandbox="allow-scripts allow-same-origin allow-popups"
+      aria-describedby="asset-widget-help-{{ asset_code }}"
+    ></iframe>
+
+    <noscript class="text-xs theme-muted mt-2">
+      JavaScript is required to resize the embedded widget. You can view the asset on
+      <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="theme-link hover:underline">StellarExpert</a>.
+    </noscript>
+  </div>
+
+  <p id="asset-widget-help-{{ asset_code }}" class="text-xs theme-muted mt-3 mb-0">
+    The embedded widget is served by StellarExpert. If the widget does not appear, open it directly on StellarExpert (opens in a new tab).
+  </p>
+</figure>
