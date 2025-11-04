@@ -1,54 +1,145 @@
 {# 
-  Partial: Embeds StellarExpert price widget for an asset.
+  Partial: Embeds StellarExpert price widget for an asset with an optional max-width wrapper.
+
   Usage:
-    {% include 'partials/_asset_price_widget.html.twig' with {
-        asset_code: 'XLMFISH',
-        asset_issuer: 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT',
-        caption: 'Live price (StellarExpert)'
+    {% include 'partials/stellar.expert/_asset_price_widget.html.twig' with {
+      asset_code: 'XLMFISH',
+      asset_issuer: 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT',
+      caption: 'Live price (StellarExpert)',
+      max_width_class: 'max-w-6xl'   # optional (defaults to max-w-6xl)
     } %}
+
   Notes:
-  - Responsive and theme-aware via .theme-card wrapper.
-  - Accessible: region role, descriptive title, and a noscript fallback link.
-  - Keeps the widget's resize postMessage listener from StellarExpert so the iframe grows/shrinks to fit.
+  - The outer wrapper constrains the widget to the same max width used elsewhere on the site.
+  - Mobile-first: widget is full-width on small screens and constrained on large screens.
+  - Script tries to auto-resize the iframe via postMessage and falls back to a safe height.
 #}
 
-{%- set asset_code   = asset_code  |default('XLMFISH') -%}
-{%- set asset_issuer = asset_issuer |default('GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT') -%}
-{%- set caption      = caption     |default('Live price (StellarExpert)') -%}
-{%- set widget_src   = 'https://stellar.expert/widget/public/asset/price/' ~ asset_code ~ '-' ~ asset_issuer -%}
+{%- set asset_code    = asset_code    |default('XLMFISH') -%}
+{%- set asset_issuer  = asset_issuer  |default('GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT') -%}
+{%- set caption       = caption       |default('Live price (StellarExpert)') -%}
+{%- set max_width_cls = max_width_class|default('max-w-6xl') -%}
+{%- set widget_src    = 'https://stellar.expert/widget/public/asset/price/' ~ asset_code ~ '-' ~ asset_issuer -%}
+{%- set iframe_id     = 'asset-price-widget-' ~ asset_code ~ '-' ~ asset_issuer|slice(0,8) -%}
 
-<figure class="theme-card rounded-lg p-4 shadow border mb-4" role="region" aria-labelledby="asset-widget-{{ asset_code }}-label">
-  <div class="flex items-center justify-between mb-3">
-    <figcaption id="asset-widget-{{ asset_code }}-label" class="font-semibold heading-accent">
-      {{ caption }}
-      <span class="text-sm theme-muted ml-2 font-mono">{{ asset_code }}‑{{ asset_issuer|slice(0,6) }}…{{ asset_issuer|slice(-6) }}</span>
-    </figcaption>
+<div class="w-full {{ max_width_cls }} mx-auto">
+  <figure class="theme-card rounded-lg p-4 shadow border mb-4" role="region" aria-labelledby="{{ iframe_id }}-label" style="overflow:visible;">
+    <div class="flex items-center justify-between mb-3">
+      <figcaption id="{{ iframe_id }}-label" class="font-semibold heading-accent">
+        {{ caption }}
+      </figcaption>
 
-    <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="text-sm theme-link hover:underline ml-3">
-      View on StellarExpert
-      <i data-feather="external-link" class="w-4 h-4 inline-block ml-1" aria-hidden="true"></i>
-    </a>
-  </div>
+      <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="text-sm theme-link hover:underline ml-3">
+        View on StellarExpert
+        <i data-feather="external-link" class="w-4 h-4 inline-block ml-1" aria-hidden="true"></i>
+      </a>
+    </div>
 
-  <div class="w-full overflow-hidden">
-    <iframe
-      id="asset-price-widget-{{ asset_code }}-{{ asset_issuer|slice(0,8) }}"
-      title="Price widget for {{ asset_code }} (StellarExpert)"
-      src="{{ widget_src }}"
-      loading="lazy"
-      onload="(function(){var c=this;window.addEventListener('message',function(e){try{const {data,source}=e;if(c&&source===c.contentWindow&&data&&data.widget===c.src){c.style.height=(data.height||c.scrollHeight||200)+'px'}}catch(err){/* ignore */}},false);})();"
-      style="border:none;overflow:hidden;max-width:100%;min-width:300px;max-height:100%;min-height:200px;width:100%;"
-      sandbox="allow-scripts allow-same-origin allow-popups"
-      aria-describedby="asset-widget-help-{{ asset_code }}"
-    ></iframe>
+    <div class="w-full overflow-visible">
+      <iframe
+        id="{{ iframe_id }}"
+        title="Price widget for {{ asset_code }} (StellarExpert)"
+        src="{{ widget_src }}"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        style="display:block;border:0;overflow:hidden;width:100%;min-width:280px;height:300px;"
+        aria-describedby="{{ iframe_id }}-help"
+      ></iframe>
 
-    <noscript class="text-xs theme-muted mt-2">
-      JavaScript is required to resize the embedded widget. You can view the asset on
-      <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="theme-link hover:underline">StellarExpert</a>.
-    </noscript>
-  </div>
+      <noscript class="text-xs theme-muted mt-2">
+        JavaScript is required to resize the embedded widget. You can view the asset on
+        <a href="https://stellar.expert/explorer/public/asset/{{ asset_code }}-{{ asset_issuer }}" target="_blank" rel="noopener noreferrer" class="theme-link hover:underline">StellarExpert</a>.
+      </noscript>
+    </div>
 
-  <p id="asset-widget-help-{{ asset_code }}" class="text-xs theme-muted mt-3 mb-0">
-    The embedded widget is served by StellarExpert. If the widget does not appear, open it directly on StellarExpert (opens in a new tab).
-  </p>
-</figure>
+    <p id="{{ iframe_id }}-help" class="text-xs theme-muted mt-3 mb-0">
+      The embedded widget is served by StellarExpert. If the widget does not appear, open it directly on StellarExpert.
+    </p>
+  </figure>
+</div>
+
+<script>
+  (function () {
+    const iframe = document.getElementById('{{ iframe_id }}');
+    if (!iframe) return;
+    const allowedOrigin = 'https://stellar.expert';
+
+    function setIframeHeight(h) {
+      if (!h || isNaN(h)) return;
+      const height = Math.max(120, Math.floor(Number(h)));
+      iframe.style.height = height + 'px';
+      iframe.style.overflow = 'hidden';
+      iframe.style.maxHeight = '';
+      iframe.style.minHeight = '';
+      // make sure parent containers don't clip
+      let p = iframe.parentElement;
+      while (p) {
+        try { if (p.style && p.style.overflow === 'hidden') p.style.overflow = 'visible'; } catch (e) { /* ignore */ }
+        p = p.parentElement;
+      }
+    }
+
+    function onMessage(e) {
+      try {
+        if (e.source !== iframe.contentWindow) return;
+        // optional stricter origin check (commented to allow flexible widget behaviour)
+        // if (e.origin && e.origin !== allowedOrigin) return;
+
+        let data = e.data;
+        if (typeof data === 'string') {
+          try { data = JSON.parse(data); } catch (err) { /* not JSON */ }
+        }
+
+        if (!data) return;
+        if (typeof data.height === 'number' || (typeof data.height === 'string' && !isNaN(Number(data.height)))) {
+          setIframeHeight(Number(data.height));
+          return;
+        }
+        if (data.type === 'resize' && data.size && data.size.height) {
+          setIframeHeight(Number(data.size.height));
+          return;
+        }
+        if (typeof data === 'number') {
+          setIframeHeight(data);
+          return;
+        }
+      } catch (err) {
+        console.warn('iframe resize listener error', err);
+      }
+    }
+
+    window.addEventListener('message', onMessage, false);
+
+    function requestHeightOnce() {
+      try {
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.postMessage === 'function') {
+          const msg = { type: 'request-height', widget: iframe.src };
+          iframe.contentWindow.postMessage(msg, '*');
+        }
+      } catch (err) { /* ignore */ }
+    }
+
+    [200, 600, 1200, 2500].forEach(delay => setTimeout(requestHeightOnce, delay));
+
+    const fallbackTimeout = setTimeout(() => {
+      if (iframe && iframe.clientHeight < 600) {
+        iframe.style.height = '900px'; // fallback large height to avoid inner scrollbar
+      }
+    }, 5000);
+
+    const clearOnMessage = function (e) {
+      if (e.source !== iframe.contentWindow) return;
+      clearTimeout(fallbackTimeout);
+      window.removeEventListener('message', clearOnMessage, false);
+    };
+    window.addEventListener('message', clearOnMessage, false);
+
+    const observer = new MutationObserver((mutations) => {
+      if (!document.body.contains(iframe)) {
+        window.removeEventListener('message', onMessage, false);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>

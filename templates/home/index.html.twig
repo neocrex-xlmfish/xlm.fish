@@ -53,14 +53,14 @@
 
         <div class="flex flex-col items-center p-8 border-l-4 border-green2 rounded-lg shadow theme-card">
           <i data-feather="trending-up" class="w-12 h-12 mb-4 text-green2"></i>
-          <h3 class="text-lg font-semibold mb-1 heading-accent">24h Volume (USD)</h3>
+          <h3 class="text-lg font-semibold mb-1 heading-accent">24h Volume</h3>
           <p class="text-2xl font-bold" id="volume-24h-usd">—</p>
           <p class="text-xs muted mt-2">across pools</p>
         </div>
 
         <div class="flex flex-col items-center p-8 border-l-4 border-primary rounded-lg shadow theme-card">
           <i data-feather="pie-chart" class="w-12 h-12 mb-4 text-primary"></i>
-          <h3 class="text-lg font-semibold mb-1 heading-accent">Market Cap (USD)</h3>
+          <h3 class="text-lg font-semibold mb-1 heading-accent">Market Cap</h3>
           <p class="text-2xl font-bold" id="market-cap-usd">—</p>
           <p class="text-xs muted mt-2">approximate (amount × price)</p>
         </div>
@@ -77,6 +77,14 @@
 
   {# Project status partial (non-technical, audience-friendly) #}
   {% include 'home/_status.html.twig' %}
+
+  {# place inside the main container/section so width alignment is consistent #}
+  {% include 'partials/stellar.expert/_asset_price_widget.html.twig' with {
+    asset_code: 'XLMFISH',
+    asset_issuer: 'GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT',
+    caption: 'Live price (StellarExpert)',
+    max_width_class: 'max-w-6xl'  # change to 'max-w-4xl' or other Tailwind max-w-* if you want narrower
+  } %}
 
   {# CTA partial (Get XLMFISH + disclaimer) #}
   {% include 'home/_cta.html.twig' %}
