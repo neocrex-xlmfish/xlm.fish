@@ -1,1 +1,22 @@
+# XLM Fish <xlm.fish>
+VERSION="2.3.0"
+NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
 
+[DOCUMENTATION]
+ORG_NAME="XLM Fish"
+ORG_URL="https://xlm.fish"
+ORG_LOGO="https://xlm.fish/xlmfish_sm.png"
+ORG_OFFICIAL_EMAIL="meme@xlm.fish"
+ORG_SUPPORT_EMAIL="meme@xlm.fish"
+ORG_TWITTER="XLMFish"
+ORG_DESCRIPTION="The fish that swims in XLM liquidity."
+
+[[CURRENCIES]]
+code="XLMFISH"
+name="XLMFISH"
+issuer="GC5DIK52DODQE67TSI5I5VD7UTWGFL56HDSCGMBZYZDD2ABTKRGXMMCM"
+is_asset_anchored=false
+display_decimals=7
+desc="The fish that swims in xlm liquidity."
+image="https://xlm.fish/xlmfish_sm.png"
+conditions="Reissue of the original XLMFISH asset GAX3YQC26LTS6NLW2QGRQC4MK24XKL5JLZ7KFHNERWPC3HKCT2ABTEMT"
